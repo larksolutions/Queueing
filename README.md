@@ -182,13 +182,6 @@ The client will start on `http://localhost:5173`
    - Login with your credentials
    - Access the dashboard based on your role
 
-### Default Test Users (if seeded)
-- **Student**: 
-  - Email: `student@test.com`
-  - Password: `password123`
-- **Faculty**: 
-  - Email: `faculty@test.com`
-  - Password: `password123`
 
 ## 🔧 Environment Variables
 
