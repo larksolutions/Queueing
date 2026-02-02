@@ -7,6 +7,10 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
 import queueRoutes from './routes/queueRoutes.js';
 import facultyRoutes from './routes/facultyRoutes.js';
+import scheduleRoutes from './routes/schedule.js';
+
+// Import utilities
+import { seedAdminUser } from './utils/seedAdmin.js';
 
 // Load environment variables
 dotenv.config();
@@ -41,6 +45,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/queue', queueRoutes);
 app.use('/api/faculty', facultyRoutes);
+app.use('/api/schedules', scheduleRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -55,7 +60,10 @@ app.use((err, req, res, next) => {
 // Start Server
 const PORT = process.env.PORT || 5001;
 
-connectDB().then(() => {
+connectDB().then(async () => {
+  // Seed default admin user after DB connection
+  await seedAdminUser();
+  
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);

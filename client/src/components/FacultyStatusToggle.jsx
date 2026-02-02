@@ -76,7 +76,7 @@ function FacultyStatusToggle() {
             <ul className="space-y-1">
               <li><strong>Available:</strong> Ready to assist students</li>
               <li><strong>Busy:</strong> Currently occupied but in office</li>
-              <li><strong>Offline:</strong> Not available for consultations</li>
+              <li><strong>Offline:</strong> Not actively monitoring queue (urgent concerns may still be accommodated via walk-in)</li>
             </ul>
           </div>
         </div>

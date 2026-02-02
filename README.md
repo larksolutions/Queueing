@@ -178,6 +178,29 @@ The client will start on `http://localhost:5173`
 
 1. Open your browser and navigate to `http://localhost:5173`
 2. You can now:
+   - Register/Login as a **Student**
+   - Register/Login as a **Faculty** member
+   - Login as an **Admin** (use default credentials below)
+
+### 🔐 Default Admin Credentials
+
+The system automatically creates a default admin account on first startup:
+
+```
+Email: queuing@neu.edu.ph
+Password: queuingadmin@123
+```
+
+⚠️ **Important Security Notes:**
+- Change the default password immediately after first login
+- These credentials are for initial setup only
+- Do not share admin credentials
+
+To manually seed the admin user, run:
+```bash
+cd server
+npm run seed
+```
    - Register as a Student or Faculty member
    - Login with your credentials
    - Access the dashboard based on your role

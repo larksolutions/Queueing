@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { queueService } from '../services';
-import { QRCodeSVG } from 'qrcode.react';
 import { useNavigate } from 'react-router-dom';
 
 const CONCERN_CATEGORIES = ['ID', 'OJT', 'Capstone', 'Staff/Admin', 'Enrollment', 'Other'];
@@ -80,14 +79,10 @@ function StudentQueue() {
             <div className="mb-6">
               <p className="text-sm text-gray-600 mb-4">Your QR Code</p>
               <div className="inline-block bg-white p-4 rounded-lg border-2 border-gray-200">
-                <QRCodeSVG 
-                  value={JSON.stringify({
-                    queueId: queueData._id,
-                    queueNumber: queueData.queueNumber,
-                    studentId: user._id,
-                    category: queueData.concernCategory
-                  })} 
-                  size={200} 
+                <img 
+                  src={queueData.qrCode} 
+                  alt="Queue QR Code" 
+                  className="w-[200px] h-[200px]" 
                 />
               </div>
             </div>
@@ -171,6 +166,12 @@ function StudentQueue() {
                 <option value="normal">Normal</option>
                 <option value="urgent">Urgent</option>
               </select>
+              <p className="mt-2 text-sm text-gray-600">
+                <svg className="w-4 h-4 inline mr-1 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+                Urgent requests may be accommodated even if faculty are offline (manual/walk-in discretion)
+              </p>
             </div>
 
             <button

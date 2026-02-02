@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { queueService } from '../services';
-import { QRCodeSVG } from 'qrcode.react';
 import { useNavigate } from 'react-router-dom';
 
 function MyQueue() {
@@ -198,16 +197,10 @@ function MyQueue() {
               <div className="flex flex-col items-center justify-start">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Your QR Code</h2>
                 <div className="bg-white border-4 border-indigo-600 rounded-lg p-6 shadow-lg">
-                  <QRCodeSVG 
-                    value={JSON.stringify({
-                      queueId: queueData._id,
-                      queueNumber: queueData.queueNumber,
-                      studentId: queueData.student._id,
-                      category: queueData.concernCategory,
-                      timestamp: Date.now()
-                    })} 
-                    size={250}
-                    level="H"
+                  <img 
+                    src={queueData.qrCode} 
+                    alt="Queue QR Code" 
+                    className="w-[250px] h-[250px]" 
                   />
                 </div>
                 <div className="mt-4 text-center">

@@ -22,7 +22,7 @@ router.post(
 router.put(
   '/status',
   protect,
-  authorize('faculty', 'admin'),
+  authorize('faculty'),
   updateAvailabilityStatus
 );
 

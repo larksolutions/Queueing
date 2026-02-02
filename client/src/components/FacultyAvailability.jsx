@@ -221,6 +221,14 @@ function FacultyAvailability() {
               <div className="mt-3 pt-3 border-t border-gray-200 text-xs text-gray-500">
                 Last updated: {formatLastUpdate(member.lastStatusUpdate)}
               </div>
+              {member.availabilityStatus === 'offline' && (
+                <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+                  <svg className="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                  Urgent concerns may still be accommodated via walk-in
+                </div>
+              )}
             </div>
           ))}
         </div>

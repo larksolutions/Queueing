@@ -84,6 +84,11 @@ export const getAllQueues = async (req, res, next) => {
     if (status) filter.status = status;
     if (concernCategory) filter.concernCategory = concernCategory;
     
+    // Security: If the logged-in user is faculty, only show queues assigned to them
+    if (req.user.role === 'faculty') {
+      filter.faculty = req.user._id;
+    }
+    
     const queues = await Queue.find(filter)
       .populate('student', 'name email studentId')
       .populate('faculty', 'name email')
@@ -194,6 +199,14 @@ export const updateQueue = async (req, res, next) => {
       return res.status(404).json({
         success: false,
         message: 'Queue entry not found'
+      });
+    }
+
+    // Admin restriction: cannot interfere with faculty queues
+    if (req.user.role === 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Admins cannot modify queue entries. Only faculty members can process queues.'
       });
     }
 

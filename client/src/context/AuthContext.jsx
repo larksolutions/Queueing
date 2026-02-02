@@ -42,6 +42,20 @@ function AuthProvider({ children }) {
     return response;
   };
 
+  const adminLogin = async (credentials) => {
+    console.log('🎯 AuthContext: adminLogin called');
+    try {
+      const response = await authService.adminLogin(credentials);
+      console.log('✅ AuthContext: adminLogin response:', response);
+      console.log('👤 Setting user:', response.user);
+      setUser(response.user);
+      return response;
+    } catch (error) {
+      console.error('❌ AuthContext: adminLogin error:', error);
+      throw error;
+    }
+  };
+
   const register = async (userData) => {
     const response = await authService.register(userData);
     setUser(response.user);
@@ -57,6 +71,7 @@ function AuthProvider({ children }) {
     user,
     loading,
     login,
+    adminLogin,
     register,
     logout,
     isAuthenticated: !!user,
