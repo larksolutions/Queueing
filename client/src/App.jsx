@@ -9,6 +9,7 @@ import StudentQueue from './pages/StudentQueue';
 import QueueManagement from './pages/QueueManagement';
 import MyQueue from './pages/MyQueue';
 import AdminPortal from './pages/AdminPortal';
+import QueueView from './pages/QueueView';
 import './App.css';
 
 // Protected Route Component
@@ -47,6 +48,10 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          
+          {/* Public Queue View Route - No authentication needed */}
+          <Route path="/queue/view/:queueNumber" element={<QueueView />} />
+          
           <Route 
             path="/student-login" 
             element={

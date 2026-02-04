@@ -46,15 +46,11 @@ export const createQueue = async (req, res, next) => {
     const avgServiceTime = 15; // minutes per person
     const estimatedWaitTime = categoryQueueCount * avgServiceTime;
 
-    // Generate QR code data
-    const qrData = {
-      queueNumber,
-      studentId: req.user._id,
-      concernCategory,
-      timestamp: Date.now()
-    };
+    // Generate QR code with URL that shows queue details
+    const baseUrl = process.env.CLIENT_URL || 'https://cicsqrqueueing.vercel.app';
+    const queueDetailsUrl = `${baseUrl}/queue/view/${queueNumber}`;
 
-    const qrCode = await generateQRCode(qrData);
+    const qrCode = await generateQRCode(queueDetailsUrl);
 
     const queue = await Queue.create({
       queueNumber,
@@ -224,6 +220,24 @@ export const updateQueue = async (req, res, next) => {
         success: false,
         message: 'Queue entry not found'
       });
+    }
+
+    // Students can only cancel their own queues
+    if (req.user.role === 'student') {
+      // Check if the queue belongs to the student
+      if (queue.student.toString() !== req.user._id.toString()) {
+        return res.status(403).json({
+          success: false,
+          message: 'You can only cancel your own queue entries'
+        });
+      }
+      // Students can only cancel (not update to other statuses)
+      if (status !== 'cancelled') {
+        return res.status(403).json({
+          success: false,
+          message: 'Students can only cancel their queue entries'
+        });
+      }
     }
 
     // Admin restriction: cannot interfere with faculty queues

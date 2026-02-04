@@ -19,7 +19,7 @@ router.get('/stats', protect, getQueueStats);
 router.get('/my-position/:id', protect, getQueuePosition);
 
 router.route('/:id')
-  .put(protect, authorize('faculty', 'admin'), updateQueue)
+  .put(protect, updateQueue)
   .delete(protect, deleteQueue);
 
 export default router;

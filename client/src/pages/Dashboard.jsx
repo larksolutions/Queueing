@@ -15,6 +15,8 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [historyLoading, setHistoryLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview'); // overview, schedules
+  const [cancelling, setCancelling] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
 
   // Redirect admin users to admin portal
   useEffect(() => {
@@ -96,6 +98,24 @@ function Dashboard() {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const handleCancelQueue = async () => {
+    if (!window.confirm('Are you sure you want to cancel your queue entry?')) {
+      return;
+    }
+
+    setCancelling(true);
+    try {
+      await queueService.updateQueue(myQueue._id, { status: 'cancelled' });
+      setMyQueue(null); // Clear the active queue
+      fetchQueueHistory(); // Refresh history to show cancelled queue
+    } catch (error) {
+      console.error('Error cancelling queue:', error);
+      alert('Failed to cancel queue. Please try again.');
+    } finally {
+      setCancelling(false);
+    }
   };
 
   return (
@@ -263,9 +283,18 @@ function Dashboard() {
                 {/* QR Code */}
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 flex flex-col items-center justify-center">
                   <p className="text-white/80 text-sm mb-2">Your QR Code</p>
-                  <div className="bg-white p-2 rounded-lg">
+                  <div 
+                    className="bg-white p-2 rounded-lg cursor-pointer hover:scale-110 hover:shadow-2xl transition-all duration-200 relative group"
+                    onClick={() => setShowQRModal(true)}
+                  >
                     <img src={myQueue.qrCode} alt="Queue QR Code" className="w-20 h-20" />
                   </div>
+                  <p className="text-white/60 text-xs mt-2 flex items-center gap-1">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                    Click to enlarge
+                  </p>
                 </div>
               </div>
 
@@ -279,6 +308,34 @@ function Dashboard() {
                       Your turn! Please proceed to the office counter now.
                     </p>
                   </div>
+                </div>
+              )}
+
+              {/* Cancel Queue Button */}
+              {myQueue.status === 'waiting' && (
+                <div className="mt-6 flex justify-end">
+                  <button
+                    onClick={handleCancelQueue}
+                    disabled={cancelling}
+                    className="px-6 py-3 bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white rounded-xl font-semibold transition duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    {cancelling ? (
+                      <>
+                        <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Cancelling...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Cancel Queue
+                      </>
+                    )}
+                  </button>
                 </div>
               )}
             </div>
@@ -497,7 +554,72 @@ function Dashboard() {
         </div>
           </>
         )}
-      </main>
+        {/* QR Code Enlarge Modal */}
+        {showQRModal && myQueue && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+            onClick={() => setShowQRModal(false)}
+          >
+            <div 
+              className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl transform transition-all"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-900">Queue QR Code</h3>
+                <button
+                  onClick={() => setShowQRModal(false)}
+                  className="text-gray-500 hover:text-gray-700 transition"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="bg-gray-50 p-6 rounded-xl mb-6">
+                <div className="bg-white p-4 rounded-lg shadow-inner flex justify-center">
+                  <img src={myQueue.qrCode} alt="Queue QR Code" className="w-64 h-64" />
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-xl mb-4">
+                <div className="grid grid-cols-2 gap-4 text-center">
+                  <div>
+                    <p className="text-gray-600 text-sm mb-1">Queue Number</p>
+                    <p className="text-2xl font-bold text-indigo-600">{myQueue.queueNumber}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600 text-sm mb-1">Category</p>
+                    <p className="text-lg font-semibold text-purple-600">{myQueue.concernCategory}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    const link = document.createElement('a');
+                    link.href = myQueue.qrCode;
+                    link.download = `queue-${myQueue.queueNumber}-qr.png`;
+                    link.click();
+                  }}
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition flex items-center justify-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Download
+                </button>
+                <button
+                  onClick={() => setShowQRModal(false)}
+                  className="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}      </main>
     </div>
   );
 }

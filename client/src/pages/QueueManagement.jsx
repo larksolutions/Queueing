@@ -119,9 +119,16 @@ function QueueManagement() {
     });
   };
 
-  const calculateWaitTime = (checkInTime) => {
+  const calculateWaitTime = (checkInTime, completedTime, status) => {
     if (!checkInTime) return 'N/A';
-    const wait = Math.floor((Date.now() - new Date(checkInTime)) / 60000);
+    
+    // For completed, cancelled, rescheduled, or declined queues, use completedTime
+    // Otherwise, use current time for active queues
+    const endTime = (status === 'completed' || status === 'cancelled' || status === 'rescheduled' || status === 'declined') && completedTime
+      ? new Date(completedTime)
+      : Date.now();
+    
+    const wait = Math.floor((endTime - new Date(checkInTime)) / 60000);
     return wait < 60 ? `${wait}m` : `${Math.floor(wait / 60)}h ${wait % 60}m`;
   };
 
@@ -427,7 +434,7 @@ function QueueManagement() {
                             <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            {calculateWaitTime(queue.checkInTime)}
+                            {calculateWaitTime(queue.checkInTime, queue.completedTime, queue.status)}
                           </div>
                           <p className="text-xs text-gray-500">Since {formatTime(queue.checkInTime)}</p>
                         </div>
@@ -592,7 +599,7 @@ function QueueManagement() {
                   )}
                   <div className="flex justify-between items-center text-sm pt-2 border-t border-gray-300">
                     <span className="text-gray-600 font-semibold">Total Wait Time</span>
-                    <span className="font-bold text-indigo-600">{calculateWaitTime(selectedQueue.checkInTime)}</span>
+                    <span className="font-bold text-indigo-600">{calculateWaitTime(selectedQueue.checkInTime, selectedQueue.completedTime, selectedQueue.status)}</span>
                   </div>
                 </div>
               </div>
