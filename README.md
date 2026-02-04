@@ -12,6 +12,7 @@ A modern MERN stack application for managing student queues and faculty availabi
 - [Installation](#installation)
 - [Running the Application](#running-the-application)
 - [Environment Variables](#environment-variables)
+- [Deployment](#deployment)
 - [API Endpoints](#api-endpoints)
 - [Current Progress](#current-progress)
 - [Contributing](#contributing)
@@ -230,7 +231,76 @@ CLIENT_URL=http://localhost:5173
 - Update `CLIENT_URL` to your production domain
 - Set `NODE_ENV=production`
 
-## 📡 API Endpoints
+## � Deployment
+
+This application is configured for easy deployment on Vercel.
+
+### Quick Deploy to Vercel
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/larksolutions/Queueing)
+
+### Manual Deployment
+
+#### Prerequisites
+- Vercel account ([Sign up free](https://vercel.com))
+- MongoDB Atlas database
+- GitHub repository (recommended)
+
+#### Deploy via Vercel CLI
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Login to Vercel
+vercel login
+
+# Deploy from project root
+vercel
+
+# Deploy to production
+vercel --prod
+```
+
+#### Deploy via GitHub Integration
+
+1. Push your code to GitHub
+2. Go to [Vercel Dashboard](https://vercel.com/dashboard)
+3. Click "Add New Project"
+4. Import your GitHub repository
+5. Configure environment variables (see below)
+6. Click "Deploy"
+
+#### Required Environment Variables for Vercel
+
+Add these in Vercel Project Settings → Environment Variables:
+
+```
+MONGODB_URI=your_mongodb_atlas_connection_string
+JWT_SECRET=your_super_secret_jwt_key
+NODE_ENV=production
+PORT=5001
+VITE_API_URL=https://your-project.vercel.app
+```
+
+#### Post-Deployment
+
+1. Update MongoDB Atlas to allow Vercel IPs (or allow from anywhere: `0.0.0.0/0`)
+2. Test all endpoints
+3. Verify frontend can communicate with backend API
+4. Check logs in Vercel Dashboard for any issues
+
+For detailed deployment instructions, see [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)
+
+### Alternative Deployment Options
+
+- **Heroku**: Suitable for both frontend and backend
+- **Railway**: Good alternative with MongoDB support
+- **Render**: Free tier available for full-stack apps
+- **DigitalOcean**: App Platform or Droplets
+- **AWS**: EC2, Elastic Beanstalk, or Amplify
+
+## �📡 API Endpoints
 
 ### Authentication
 - `POST /api/auth/register` - Register new user (student/faculty)

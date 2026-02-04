@@ -59,15 +59,25 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start Server
-const PORT = process.env.PORT || 5001;
+// Start Server (only when not in serverless environment)
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  const PORT = process.env.PORT || 5001;
 
-connectDB().then(async () => {
-  // Seed default admin user after DB connection
-  await seedAdminUser();
-  
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  connectDB().then(async () => {
+    // Seed default admin user after DB connection
+    await seedAdminUser();
+    
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    });
   });
-});
+} else {
+  // For Vercel serverless, connect to DB on each request
+  connectDB().then(async () => {
+    await seedAdminUser();
+  });
+}
+
+// Export for Vercel serverless
+export default app;

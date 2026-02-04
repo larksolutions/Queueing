@@ -138,11 +138,7 @@ function QueueManagement() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <div className="bg-indigo-600 p-3 rounded-lg">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                </div>
+                <img src="/logo.png" alt="CICS Logo" className="h-14 w-14 object-contain" />
                 <div>
                   <h1 className="text-3xl font-bold text-gray-900">Queue Management</h1>
                   <p className="text-gray-600">Monitor and manage student queues efficiently</p>

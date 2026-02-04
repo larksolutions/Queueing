@@ -346,11 +346,14 @@ function AdminPortal() {
         {/* Navbar */}
         <header className="bg-white shadow-sm border-b border-gray-200">
           <div className="px-6 py-4 flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                {menuItems.find(item => item.id === activeTab)?.label || 'Admin Portal'}
-              </h1>
-              <p className="text-sm text-gray-600">CICS Queueing System - Administrator Dashboard</p>
+            <div className="flex items-center gap-4">
+              <img src="/logo.png" alt="CICS Logo" className="h-12 w-12 object-contain" />
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {menuItems.find(item => item.id === activeTab)?.label || 'Admin Portal'}
+                </h1>
+                <p className="text-sm text-gray-600">CICS Queueing System - Administrator Dashboard</p>
+              </div>
             </div>
             
             {/* Logout */}
