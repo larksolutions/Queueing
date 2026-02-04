@@ -48,7 +48,7 @@ export const sendQueueAssignmentEmail = async (studentEmail, queueData) => {
             <p style="color: #4b5563; font-size: 16px;">Please be ready to proceed with your concern.</p>
             
             <div style="text-align: center; margin: 30px 0;">
-              <a href="${process.env.CLIENT_URL || 'https://cicsqueueing.vercel.app'}/my-queue" 
+              <a href="${process.env.CLIENT_URL || 'https://cicsqrqueueing.vercel.app'}/my-queue" 
                  style="background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block;">
                 View My Queue
               </a>
@@ -147,7 +147,7 @@ export const sendQueueRescheduledEmail = async (studentEmail, queueData) => {
             <p style="color: #4b5563; font-size: 16px;">Please contact the office for your new schedule.</p>
             
             <div style="text-align: center; margin: 30px 0;">
-              <a href="${process.env.CLIENT_URL || 'https://cicsqueueing.vercel.app'}/my-queue" 
+              <a href="${process.env.CLIENT_URL || 'https://cicsqrqueueing.vercel.app'}/my-queue" 
                  style="background: #f59e0b; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block;">
                 View My Queue
               </a>

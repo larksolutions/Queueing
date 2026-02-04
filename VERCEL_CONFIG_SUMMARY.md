@@ -113,7 +113,7 @@ Vercel Edge Network
 - Static assets in `public/`
 
 ### API Calls
-- Development: `https://cicsqueueing.vercel.app/api`
+- Development: `https://cicsqrqueueing.vercel.app/api`
 - Production: `https://your-project.vercel.app/api`
 - Configured via `VITE_API_URL`
 

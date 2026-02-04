@@ -166,18 +166,18 @@ You need to run both the server and client simultaneously in separate terminal w
 cd server
 npm run dev
 ```
-The server will start on `https://cicsqueueing.vercel.app`
+The server will start on `https://cicsqrqueueing.vercel.app`
 
 #### Terminal 2 - Start the Frontend Client
 ```bash
 cd client
 npm run dev
 ```
-The client will start on `https://cicsqueueing.vercel.app`
+The client will start on `https://cicsqrqueueing.vercel.app`
 
 ### Accessing the Application
 
-1. Open your browser and navigate to `https://cicsqueueing.vercel.app`
+1. Open your browser and navigate to `https://cicsqrqueueing.vercel.app`
 2. You can now:
    - Register/Login as a **Student**
    - Register/Login as a **Faculty** member
@@ -223,7 +223,7 @@ JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 JWT_EXPIRE=7d
 
 # Client URL (for CORS)
-CLIENT_URL=https://cicsqueueing.vercel.app
+CLIENT_URL=https://cicsqrqueueing.vercel.app
 ```
 
 **Note**: For production deployment, make sure to:
