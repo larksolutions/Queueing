@@ -1,3 +1,4 @@
+
 {
   "version": 2,
   "buildCommand": "cd client && npm install && npm run build",
@@ -14,3 +15,4 @@
     }
   ]
 }
+
