@@ -113,7 +113,7 @@ Vercel Edge Network
 - Static assets in `public/`
 
 ### API Calls
-- Development: `http://localhost:5001/api`
+- Development: `https://cicsqueueing.vercel.app/api`
 - Production: `https://your-project.vercel.app/api`
 - Configured via `VITE_API_URL`
 
