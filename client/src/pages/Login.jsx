@@ -72,7 +72,7 @@ function Login() {
             </svg>
           </div>
           <h1 className="text-4xl font-extrabold text-white mb-2">
-            QR Queue System
+            CICS Queueing System
           </h1>
           <p className="text-indigo-100 text-lg">
             IT Department Office

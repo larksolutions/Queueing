@@ -140,7 +140,7 @@ function StudentLogin() {
             Student Portal
           </h1>
           <p className="text-indigo-100 text-lg">
-            QR Queue System - IT Department
+            CICS Queueing System - CICS Department
           </p>
         </div>
 

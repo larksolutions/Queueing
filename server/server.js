@@ -8,6 +8,7 @@ import authRoutes from './routes/authRoutes.js';
 import queueRoutes from './routes/queueRoutes.js';
 import facultyRoutes from './routes/facultyRoutes.js';
 import scheduleRoutes from './routes/schedule.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 // Import utilities
 import { seedAdminUser } from './utils/seedAdmin.js';
@@ -46,6 +47,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/queue', queueRoutes);
 app.use('/api/faculty', facultyRoutes);
 app.use('/api/schedules', scheduleRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -1,5 +1,11 @@
 import Queue from '../models/Queue.js';
 import { generateQRCode } from '../utils/qrUtils.js';
+import {
+  sendQueueAssignmentEmail,
+  sendQueueCompletionEmail,
+  sendQueueRescheduledEmail,
+  sendQueueDeclinedEmail
+} from '../utils/emailService.js';
 
 // @desc    Create new queue entry with automatic categorization
 // @route   POST /api/queue
@@ -84,9 +90,27 @@ export const getAllQueues = async (req, res, next) => {
     if (status) filter.status = status;
     if (concernCategory) filter.concernCategory = concernCategory;
     
-    // Security: If the logged-in user is faculty, only show queues assigned to them
+    // Security: If the logged-in user is faculty
     if (req.user.role === 'faculty') {
-      filter.faculty = req.user._id;
+      // For 'waiting' status, show all queues (so faculty can see what needs to be assigned)
+      if (status === 'waiting') {
+        // Show all waiting queues - no faculty filter
+      } else if (status && status !== 'waiting') {
+        // For other statuses, show queues assigned to this faculty OR unassigned queues with that status
+        filter.$or = [
+          { faculty: req.user._id },
+          { faculty: { $exists: false } },
+          { faculty: null }
+        ];
+      } else if (!status) {
+        // If no status filter, show waiting queues + queues assigned to this faculty + unassigned queues
+        filter.$or = [
+          { status: 'waiting' },
+          { faculty: req.user._id },
+          { faculty: { $exists: false } },
+          { faculty: null }
+        ];
+      }
     }
     
     const queues = await Queue.find(filter)
@@ -191,7 +215,7 @@ export const getQueuePosition = async (req, res, next) => {
 // @access  Private (Faculty/Admin)
 export const updateQueue = async (req, res, next) => {
   try {
-    const { status, faculty, notes } = req.body;
+    const { status, faculty, notes, remarks } = req.body;
 
     let queue = await Queue.findById(req.params.id);
 
@@ -212,16 +236,62 @@ export const updateQueue = async (req, res, next) => {
 
     const updateData = { status };
     
-    if (faculty) updateData.faculty = faculty;
+    // Auto-assign faculty when status changes to 'in-progress'
+    if (status === 'in-progress' && req.user.role === 'faculty') {
+      // Only auto-assign if not already assigned
+      if (!queue.faculty && !faculty) {
+        updateData.faculty = req.user._id;
+        console.log('Auto-assigning faculty:', req.user._id, 'to queue:', queue._id);
+      }
+    }
+    
+    // Explicit faculty assignment overrides auto-assignment
+    if (faculty) {
+      updateData.faculty = faculty;
+      console.log('Explicitly assigning faculty:', faculty, 'to queue:', queue._id);
+    }
+    
     if (notes) updateData.notes = notes;
-    if (status === 'in-progress') updateData.startTime = Date.now();
-    if (status === 'completed') updateData.completedTime = Date.now();
+    if (remarks) updateData.remarks = remarks;
+    if (status === 'in-progress') {
+      updateData.startTime = Date.now();
+    }
+    if (status === 'completed' || status === 'rescheduled' || status === 'declined') {
+      updateData.completedTime = Date.now();
+    }
 
     queue = await Queue.findByIdAndUpdate(
       req.params.id,
       updateData,
       { new: true, runValidators: true }
     ).populate('student', 'name email studentId').populate('faculty', 'name email');
+
+    // Send email notifications based on status
+    const emailData = {
+      queueNumber: queue.queueNumber,
+      studentName: queue.student?.name || 'Student',
+      category: queue.concernCategory,
+      facultyName: queue.faculty?.name || 'Faculty',
+      status: queue.status,
+      remarks: queue.remarks || ''
+    };
+
+    if (queue.student?.email) {
+      try {
+        if (status === 'in-progress' && faculty) {
+          await sendQueueAssignmentEmail(queue.student.email, emailData);
+        } else if (status === 'completed') {
+          await sendQueueCompletionEmail(queue.student.email, emailData);
+        } else if (status === 'rescheduled') {
+          await sendQueueRescheduledEmail(queue.student.email, emailData);
+        } else if (status === 'declined') {
+          await sendQueueDeclinedEmail(queue.student.email, emailData);
+        }
+      } catch (emailError) {
+        console.error('Email notification failed:', emailError);
+        // Don't fail the request if email fails
+      }
+    }
 
     res.status(200).json({
       success: true,

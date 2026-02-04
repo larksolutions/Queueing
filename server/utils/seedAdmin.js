@@ -1,4 +1,3 @@
-import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 
 export const seedAdminUser = async () => {
@@ -12,12 +11,11 @@ export const seedAdminUser = async () => {
     }
 
     // Create default admin user
-    const hashedPassword = await bcrypt.hash('queuingadmin@123', 10);
-    
+    // Don't manually hash - User model will handle it with pre-save hook
     const adminUser = await User.create({
       name: 'System Administrator',
       email: 'queuing@neu.edu.ph',
-      password: hashedPassword,
+      password: 'queuingadmin@123', // Plain password - will be hashed by model
       role: 'admin',
       isAvailable: false,
       availabilityStatus: 'offline'

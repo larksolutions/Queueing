@@ -24,12 +24,28 @@ function FacultyLogin() {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Clear institutional email error when user types
+    if (e.target.name === 'email' && error.includes('institutional email')) {
+      setError('');
+    }
+  };
+
+  const validateInstitutionalEmail = (email) => {
+    const institutionalEmailPattern = /@neu\.edu\.ph$/i;
+    return institutionalEmailPattern.test(email);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+
+    // Validate institutional email
+    if (!validateInstitutionalEmail(formData.email)) {
+      setError('Please use your institutional email address (@neu.edu.ph)');
+      setLoading(false);
+      return;
+    }
 
     try {
       if (isLogin) {
@@ -64,7 +80,7 @@ function FacultyLogin() {
             Faculty Portal
           </h1>
           <p className="text-emerald-100 text-lg">
-            QR Queue System - IT Department
+            CICS Queueing System - CICS Department
           </p>
         </div>
 

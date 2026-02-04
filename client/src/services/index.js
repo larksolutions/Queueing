@@ -165,3 +165,43 @@ export const scheduleService = {
   },
 };
 
+export const adminService = {
+  // Get all students
+  getAllStudents: async (search = '', page = 1, limit = 20) => {
+    let url = `http://localhost:5001/api/admin/students?page=${page}&limit=${limit}`;
+    if (search) url += `&search=${encodeURIComponent(search)}`;
+    const response = await api.get(url);
+    return response.data;
+  },
+
+  // Get student by ID
+  getStudentById: async (studentId) => {
+    const response = await api.get(`http://localhost:5001/api/admin/students/${studentId}`);
+    return response.data;
+  },
+
+  // Get all faculty (admin view)
+  getAllFacultyAdmin: async (search = '', status = '', page = 1, limit = 20) => {
+    let url = `http://localhost:5001/api/admin/faculty?page=${page}&limit=${limit}`;
+    if (search) url += `&search=${encodeURIComponent(search)}`;
+    if (status) url += `&status=${status}`;
+    const response = await api.get(url);
+    return response.data;
+  },
+
+  // Get faculty by ID
+  getFacultyById: async (facultyId) => {
+    const response = await api.get(`http://localhost:5001/api/admin/faculty/${facultyId}`);
+    return response.data;
+  },
+
+  // Get system analytics
+  getSystemAnalytics: async (startDate = null, endDate = null) => {
+    let url = 'http://localhost:5001/api/admin/analytics?';
+    if (startDate) url += `startDate=${startDate}&`;
+    if (endDate) url += `endDate=${endDate}`;
+    const response = await api.get(url);
+    return response.data;
+  },
+};
+

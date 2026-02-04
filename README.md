@@ -1,6 +1,6 @@
-# QR-Based Queueing and Faculty Availability System
+# CICS Queueing System
 
-A modern MERN stack application for managing student queues and faculty availability in the IT Department Office.
+A modern MERN stack application for managing student queues and faculty availability in the College of Informatics and Computing Sciences (CICS) Department Office.
 
 ![Status](https://img.shields.io/badge/Status-Active%20Development-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-blue)

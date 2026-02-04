@@ -112,7 +112,7 @@ function Dashboard() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  QR Queue System
+                  CICS Queueing System
                 </h1>
                 <p className="text-xs text-gray-500">IT Department Office</p>
               </div>

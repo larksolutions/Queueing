@@ -27,9 +27,13 @@ const queueSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['waiting', 'in-progress', 'completed', 'cancelled'],
+    enum: ['waiting', 'in-progress', 'completed', 'cancelled', 'rescheduled', 'declined'],
     default: 'waiting',
     index: true
+  },
+  remarks: {
+    type: String,
+    trim: true
   },
   qrCode: {
     type: String // Base64 QR code image

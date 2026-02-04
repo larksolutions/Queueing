@@ -21,10 +21,23 @@ function AdminLogin() {
     setError('');
   };
 
+  const validateInstitutionalEmail = (email) => {
+    const institutionalEmailPattern = /@neu\.edu\.ph$/i;
+    return institutionalEmailPattern.test(email);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+
+    // Validate institutional email
+    if (!validateInstitutionalEmail(formData.email)) {
+      setError('Please use your institutional email address (@neu.edu.ph)');
+      setLoading(false);
+      return;
+    }
+
     console.log('🔵 Admin login form submitted');
     console.log('📧 Email:', formData.email);
 
@@ -33,7 +46,7 @@ function AdminLogin() {
       const response = await adminLogin({ email: formData.email, password: formData.password });
       console.log('✅ Admin login response:', response);
       console.log('🧭 Navigating to /admin/portal');
-    //   navigate('/admin/portal');
+      navigate('/admin/portal');
     } catch (err) {
       console.error('❌ Admin login error:', err);
       console.error('📋 Error response:', err.response);
@@ -63,7 +76,7 @@ function AdminLogin() {
             Admin Portal
           </h1>
           <p className="text-gray-300 text-lg">
-            QR Queue System - Administrator Access
+            CICS Queueing System - Administrator Access
           </p>
         </div>
 

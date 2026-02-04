@@ -10,8 +10,8 @@ function LandingPage() {
 
   const faqs = [
     {
-      question: "What is the QR Queue System?",
-      answer: "The QR Queue System is a digital queueing solution designed for the IT Department Office. It allows students to join virtual queues for various concerns, track their position in real-time, and receive QR codes for verification. Faculty members can manage queues efficiently and update their availability status."
+      question: "What is the CICS Queueing System?",
+      answer: "The CICS Queueing System is a digital queueing solution designed for the College of Informatics and Computing Sciences (CICS) Department Office. It allows students to join virtual queues for various concerns, track their position in real-time, and receive QR codes for verification. Faculty members can manage queues efficiently and update their availability status."
     },
     {
       question: "How do I join a queue?",
@@ -34,7 +34,7 @@ function LandingPage() {
       answer: "Yes! The dashboard has a 'Faculty Availability' section where you can search for faculty members by name, email, or specialization. You can see their current status (Available, Busy, or Offline) and office location."
     },
     {      question: "Can I still get help if a faculty member is marked offline?",
-      answer: "Yes! While offline faculty are not actively monitoring the queue system, urgent concerns can still be accommodated through walk-in visits or manual processing at the faculty's discretion. Mark your concern as 'Urgent' when joining the queue."
+      answer: "Yes! While offline faculty are not actively monitoring the CICS Queueing System, urgent concerns can still be accommodated through walk-in visits or manual processing at the faculty's discretion. Mark your concern as 'Urgent' when joining the queue. The system allows flexibility for exceptional cases."
     },
     {      question: "What if I need to leave the queue?",
       answer: "You can view your queue history from your dashboard. However, once you join a queue, staying in line is important. If you must leave, your position will be maintained until processed or removed by an administrator."
@@ -49,7 +49,7 @@ function LandingPage() {
     },
     {
       question: "Who can I contact for technical support?",
-      answer: "For technical issues with the QR Queue System, please visit the IT Department Office during office hours or contact the system administrator through the Staff/Admin queue category."
+      answer: "For technical issues with the CICS Queueing System, please visit the CICS Department Office during office hours or contact the system administrator through the Staff/Admin queue category."
     }
   ];
 
@@ -101,8 +101,8 @@ function LandingPage() {
       title: "Office Hours",
       icon: "🕐",
       steps: [
-        "IT Department Office hours: Monday-Friday, 8:00 AM - 5:00 PM",
-        "Queue system is accessible 24/7 for joining queues",
+        "CICS Department Office hours: Monday-Friday, 8:00 AM - 5:00 PM",
+        "Queueing system is accessible 24/7 for joining queues",
         "Queues are processed during office hours only",
         "Weekend and holiday queues will be processed on the next business day",
         "Emergency concerns should be reported directly to the office"
@@ -133,9 +133,9 @@ function LandingPage() {
               </div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  QR Queue System
+                  CICS Queueing System
                 </h1>
-                <p className="text-xs text-gray-600">IT Department</p>
+                <p className="text-xs text-gray-600">CICS Department</p>
               </div>
             </div>
             <div className="flex space-x-4">
@@ -177,11 +177,11 @@ function LandingPage() {
           <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6">
             Welcome to the{' '}
             <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              QR Queue System
+              CICS Queueing System
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            A modern, efficient digital queueing solution for the IT Department Office. 
+            A modern, efficient digital queueing solution for the College of Informatics and Computing Sciences (CICS) Department Office. 
             Skip the physical lines and manage your time better.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -285,7 +285,7 @@ function LandingPage() {
               Guidelines & Best Practices
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Follow these guidelines to make the most of the QR Queue System
+              Follow these guidelines to make the most of the CICS Queueing System
             </p>
           </div>
 
@@ -318,7 +318,7 @@ function LandingPage() {
               Frequently Asked Questions
             </h2>
             <p className="text-xl text-gray-600">
-              Everything you need to know about the QR Queue System
+              Everything you need to know about the CICS Queueing System
             </p>
           </div>
 
@@ -398,10 +398,10 @@ function LandingPage() {
                 <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
                   <span className="text-2xl">📱</span>
                 </div>
-                <h3 className="text-xl font-bold">QR Queue System</h3>
+                <h3 className="text-xl font-bold">CICS Queueing System</h3>
               </div>
               <p className="text-gray-400">
-                Modernizing queue management for the IT Department Office
+                Modernizing queue management for the College of Informatics and Computing Sciences (CICS) Department Office
               </p>
             </div>
             <div>
@@ -419,12 +419,12 @@ function LandingPage() {
               <p className="text-gray-400">
                 Monday - Friday<br />
                 8:00 AM - 5:00 PM<br />
-                IT Department Office
+                CICS Department Office
               </p>
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 IT Department. All rights reserved.</p>
+            <p>&copy; 2025 CICS Department. All rights reserved.</p>
           </div>
         </div>
       </footer>
