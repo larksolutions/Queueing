@@ -12,6 +12,8 @@ function FacultyScheduleManager() {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showBookedStudentsModal, setShowBookedStudentsModal] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [editingSchedule, setEditingSchedule] = useState(null);
@@ -95,7 +97,15 @@ function FacultyScheduleManager() {
 
   const handleEventClick = (clickInfo) => {
     const schedule = clickInfo.event.extendedProps.scheduleData;
-    handleEdit(schedule);
+    setSelectedSchedule(schedule);
+    
+    // If schedule has booked students, show the booked students modal
+    if (schedule.bookedStudents && schedule.bookedStudents.length > 0) {
+      setShowBookedStudentsModal(true);
+    } else {
+      // Otherwise, open the edit modal
+      handleEdit(schedule);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -415,6 +425,128 @@ function FacultyScheduleManager() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Booked Students Modal */}
+      {showBookedStudentsModal && selectedSchedule && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center">
+            <div
+              className="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75"
+              onClick={() => setShowBookedStudentsModal(false)}
+            ></div>
+
+            <div className="relative inline-block w-full max-w-3xl p-6 my-8 text-left bg-white rounded-2xl shadow-xl">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    {selectedSchedule.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {formatDate(selectedSchedule.startTime)} • {formatTime(selectedSchedule.startTime)} - {formatTime(selectedSchedule.endTime)}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowBookedStudentsModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Schedule Details */}
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-600">Type:</span>
+                    <span className="ml-2 font-semibold capitalize">{selectedSchedule.type}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Location:</span>
+                    <span className="ml-2 font-semibold">{selectedSchedule.location || 'N/A'}</span>
+                  </div>
+                  {selectedSchedule.maxStudents && (
+                    <div className="col-span-2">
+                      <span className="text-gray-600">Capacity:</span>
+                      <span className="ml-2 font-semibold">
+                        {selectedSchedule.bookedStudents?.length || 0} / {selectedSchedule.maxStudents} students
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {selectedSchedule.description && (
+                  <div className="mt-3 pt-3 border-t border-gray-200">
+                    <p className="text-sm text-gray-700">{selectedSchedule.description}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Booked Students List */}
+              <div>
+                <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                  Booked Students ({selectedSchedule.bookedStudents?.length || 0})
+                </h4>
+                
+                {selectedSchedule.bookedStudents && selectedSchedule.bookedStudents.length > 0 ? (
+                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {selectedSchedule.bookedStudents.map((student, index) => (
+                      <div
+                        key={student._id || index}
+                        className="flex items-center justify-between p-4 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-lg hover:shadow-md transition"
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">
+                            {student.name?.charAt(0).toUpperCase() || '?'}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-900">{student.name}</p>
+                            <p className="text-sm text-gray-600">{student.email}</p>
+                            {student.studentId && (
+                              <p className="text-xs text-gray-500">ID: {student.studentId}</p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                            ✓ Booked
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 text-gray-500">
+                    <svg className="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <p className="text-gray-600">No students have booked this schedule yet</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 pt-6 mt-6 border-t border-gray-200">
+                <button
+                  onClick={() => {
+                    setShowBookedStudentsModal(false);
+                    handleEdit(selectedSchedule);
+                  }}
+                  className="flex-1 px-6 py-3 border-2 border-indigo-600 text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition"
+                >
+                  ✏️ Edit Schedule
+                </button>
+                <button
+                  onClick={() => setShowBookedStudentsModal(false)}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition shadow-lg"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>

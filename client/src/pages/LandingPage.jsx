@@ -128,8 +128,8 @@ function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
-                <span className="text-2xl">📱</span>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
+                <img src="/logo.png" alt="CICS Logo" className="w-full h-full object-contain" />
               </div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
@@ -395,8 +395,8 @@ function LandingPage() {
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
-                  <span className="text-2xl">📱</span>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
+                  <img src="/logo.png" alt="CICS Logo" className="w-full h-full object-contain" />
                 </div>
                 <h3 className="text-xl font-bold">CICS Queueing System</h3>
               </div>
