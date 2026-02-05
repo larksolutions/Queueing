@@ -4,7 +4,9 @@ import {
   getAllFacultyAdmin,
   getStudentById,
   getFacultyById,
-  getSystemAnalytics
+  getSystemAnalytics,
+  updateUser,
+  deleteUser
 } from '../controllers/adminController.js';
 import { protect } from '../middleware/auth.js';
 
@@ -20,6 +22,10 @@ router.get('/students/:id', getStudentById);
 // Faculty management routes (read-only for admin)
 router.get('/faculty', getAllFacultyAdmin);
 router.get('/faculty/:id', getFacultyById);
+
+// User management routes
+router.put('/users/:id', updateUser);
+router.delete('/users/:id', deleteUser);
 
 // Analytics route
 router.get('/analytics', getSystemAnalytics);

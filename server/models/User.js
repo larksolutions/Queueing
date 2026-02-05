@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     sparse: true
   },
+  isEnrolled: {
+    type: Boolean,
+    default: false // For student enrollment status
+  },
   facultyId: {
     type: String,
     sparse: true

@@ -5,6 +5,7 @@ import StudentLogin from './pages/StudentLogin';
 import FacultyLogin from './pages/FacultyLogin';
 import AdminLogin from './pages/AdminLogin';
 import Dashboard from './pages/Dashboard';
+import NonEnrolledDashboard from './pages/NonEnrolledDashboard';
 import StudentQueue from './pages/StudentQueue';
 import QueueManagement from './pages/QueueManagement';
 import MyQueue from './pages/MyQueue';
@@ -40,6 +41,28 @@ const PublicRoute = ({ children }) => {
   }
 
   return !isAuthenticated ? children : <Navigate to="/dashboard" />;
+};
+
+// Enrollment Route Component (redirect non-enrolled students to limited dashboard)
+const EnrollmentRoute = ({ children }) => {
+  const { isAuthenticated, user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-2xl text-indigo-600">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) return <Navigate to="/student-login" />;
+  
+  // If user is a student and not enrolled, redirect to non-enrolled dashboard
+  if (user?.role === 'student' && !user?.isEnrolled) {
+    return <Navigate to="/non-enrolled-dashboard" />;
+  }
+
+  return children;
 };
 
 function App() {
@@ -80,7 +103,17 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <EnrollmentRoute>
+                  <Dashboard />
+                </EnrollmentRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/non-enrolled-dashboard"
+            element={
+              <ProtectedRoute>
+                <NonEnrolledDashboard />
               </ProtectedRoute>
             }
           />

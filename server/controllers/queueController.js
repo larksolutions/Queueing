@@ -86,27 +86,13 @@ export const getAllQueues = async (req, res, next) => {
     if (status) filter.status = status;
     if (concernCategory) filter.concernCategory = concernCategory;
     
-    // Security: If the logged-in user is faculty
+    // Security: Faculty can see waiting queues (to pick them up) and their own assigned queues
     if (req.user.role === 'faculty') {
-      // For 'waiting' status, show all queues (so faculty can see what needs to be assigned)
-      if (status === 'waiting') {
-        // Show all waiting queues - no faculty filter
-      } else if (status && status !== 'waiting') {
-        // For other statuses, show queues assigned to this faculty OR unassigned queues with that status
-        filter.$or = [
-          { faculty: req.user._id },
-          { faculty: { $exists: false } },
-          { faculty: null }
-        ];
-      } else if (!status) {
-        // If no status filter, show waiting queues + queues assigned to this faculty + unassigned queues
-        filter.$or = [
-          { status: 'waiting' },
-          { faculty: req.user._id },
-          { faculty: { $exists: false } },
-          { faculty: null }
-        ];
-      }
+      // Show waiting queues (unassigned or any) OR queues assigned to this faculty
+      filter.$or = [
+        { status: 'waiting' },
+        { faculty: req.user._id }
+      ];
     }
     
     const queues = await Queue.find(filter)
@@ -132,11 +118,18 @@ export const getQueueStats = async (req, res, next) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    const matchConditions = {
+      checkInTime: { $gte: today }
+    };
+
+    // Security: If the logged-in user is faculty, only show stats for their own queues
+    if (req.user.role === 'faculty') {
+      matchConditions.faculty = req.user._id;
+    }
+
     const stats = await Queue.aggregate([
       {
-        $match: {
-          checkInTime: { $gte: today }
-        }
+        $match: matchConditions
       },
       {
         $group: {

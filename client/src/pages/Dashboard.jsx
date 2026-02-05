@@ -23,6 +23,10 @@ function Dashboard() {
     if (user?.role === 'admin') {
       navigate('/admin/portal');
     }
+    // Redirect non-enrolled students to limited dashboard
+    if (user?.role === 'student' && !user?.isEnrolled) {
+      navigate('/non-enrolled-dashboard');
+    }
   }, [user, navigate]);
 
   useEffect(() => {

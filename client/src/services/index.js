@@ -203,5 +203,17 @@ export const adminService = {
     const response = await api.get(url);
     return response.data;
   },
+
+  // Update user (student or faculty)
+  updateUser: async (userId, data) => {
+    const response = await api.put(`http://localhost:5001/api/admin/users/${userId}`, data);
+    return response.data;
+  },
+
+  // Delete user (student or faculty)
+  deleteUser: async (userId) => {
+    const response = await api.delete(`http://localhost:5001/api/admin/users/${userId}`);
+    return response.data;
+  },
 };
 

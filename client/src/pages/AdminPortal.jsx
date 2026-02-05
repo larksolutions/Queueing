@@ -22,6 +22,13 @@ function AdminPortal() {
   const [facultyList, setFacultyList] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   
+  // Edit/Delete modals
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [editFormData, setEditFormData] = useState({});
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletingUser, setDeletingUser] = useState(null);
+  
   // Analytics data
   const [analyticsData, setAnalyticsData] = useState(null);
   
@@ -170,6 +177,62 @@ function AdminPortal() {
     };
     return colors[status] || 'bg-gray-100 text-gray-800 border-gray-300';
   };
+
+  const handleEditUser = (user) => {
+    setEditingUser(user);
+    setEditFormData({
+      name: user.name || '',
+      email: user.email || '',
+      studentId: user.studentId || '',
+      facultyId: user.facultyId || '',
+      department: user.department || '',
+      specialization: user.specialization || '',
+      officeLocation: user.officeLocation || '',
+      isEnrolled: user.isEnrolled || false,
+    });
+    setShowEditModal(true);
+  };
+
+  const handleUpdateUser = async (e) => {
+    e.preventDefault();
+    try {
+      await adminService.updateUser(editingUser._id, editFormData);
+      setShowEditModal(false);
+      setEditingUser(null);
+      // Refresh the list
+      if (activeTab === 'student-management') {
+        fetchStudents();
+      } else if (activeTab === 'faculty-management') {
+        fetchFacultyList();
+      }
+    } catch (error) {
+      console.error('Error updating user:', error);
+      alert('Failed to update user. Please try again.');
+    }
+  };
+
+  const handleDeleteUser = (user) => {
+    setDeletingUser(user);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteUser = async () => {
+    try {
+      await adminService.deleteUser(deletingUser._id);
+      setShowDeleteModal(false);
+      setDeletingUser(null);
+      // Refresh the list
+      if (activeTab === 'student-management') {
+        fetchStudents();
+      } else if (activeTab === 'faculty-management') {
+        fetchFacultyList();
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      alert('Failed to delete user. Please try again.');
+    }
+  };
+
 
   const getCategoryColor = (category) => {
     const colors = {
@@ -628,7 +691,9 @@ function AdminPortal() {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Enrollment</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -640,8 +705,37 @@ function AdminPortal() {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{student.name}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{student.email}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{student.department || 'N/A'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${student.isEnrolled ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}>
+                              {student.isEnrolled ? 'Enrolled' : 'Not Enrolled'}
+                            </span>
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                             {new Date(student.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleEditUser(student)}
+                                className="text-indigo-600 hover:text-indigo-900 font-medium flex items-center gap-1"
+                                title="Edit Student"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDeleteUser(student)}
+                                className="text-red-600 hover:text-red-900 font-medium flex items-center gap-1"
+                                title="Delete Student"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Delete
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -662,8 +756,8 @@ function AdminPortal() {
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Faculty Management (Read-Only)</h3>
-                  <p className="text-sm text-gray-600 mt-1">View faculty information and availability</p>
+                  <h3 className="text-lg font-semibold text-gray-900">Faculty Management</h3>
+                  <p className="text-sm text-gray-600 mt-1">View and manage faculty information and availability</p>
                 </div>
                 <input
                   type="text"
@@ -697,11 +791,31 @@ function AdminPortal() {
                           {f.availabilityStatus}
                         </span>
                       </div>
-                      <div className="space-y-2 text-sm text-gray-600">
+                      <div className="space-y-2 text-sm text-gray-600 mb-4">
                         <p><strong>Email:</strong> {f.email}</p>
                         <p><strong>Specialization:</strong> {f.specialization || 'N/A'}</p>
                         <p><strong>Office:</strong> {f.officeLocation || 'N/A'}</p>
                         <p><strong>Department:</strong> {f.department || 'N/A'}</p>
+                      </div>
+                      <div className="flex items-center gap-2 pt-4 border-t border-gray-200">
+                        <button
+                          onClick={() => handleEditUser(f)}
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteUser(f)}
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          Delete
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -912,6 +1026,186 @@ function AdminPortal() {
         )}
         </main>
       </div>
+
+      {/* Edit User Modal */}
+      {showEditModal && editingUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-5 flex items-center justify-between rounded-t-2xl">
+              <h3 className="text-2xl font-bold text-white">Edit {editingUser.role === 'student' ? 'Student' : 'Faculty'}</h3>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="text-white hover:bg-white hover:bg-opacity-20 rounded-lg p-2 transition"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <form onSubmit={handleUpdateUser} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                <input
+                  type="text"
+                  value={editFormData.name}
+                  onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                <input
+                  type="email"
+                  value={editFormData.email}
+                  onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  required
+                />
+              </div>
+
+              {editingUser.role === 'student' && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Student ID</label>
+                    <input
+                      type="text"
+                      value={editFormData.studentId}
+                      onChange={(e) => setEditFormData({ ...editFormData, studentId: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      id="isEnrolled"
+                      checked={editFormData.isEnrolled}
+                      onChange={(e) => setEditFormData({ ...editFormData, isEnrolled: e.target.checked })}
+                      className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                    />
+                    <label htmlFor="isEnrolled" className="text-sm font-medium text-gray-700">
+                      Enrolled Student (Full Access)
+                    </label>
+                  </div>
+                </>
+              )}
+
+              {editingUser.role === 'faculty' && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Faculty ID</label>
+                    <input
+                      type="text"
+                      value={editFormData.facultyId}
+                      onChange={(e) => setEditFormData({ ...editFormData, facultyId: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
+                    <input
+                      type="text"
+                      value={editFormData.specialization}
+                      onChange={(e) => setEditFormData({ ...editFormData, specialization: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Office Location</label>
+                    <input
+                      type="text"
+                      value={editFormData.officeLocation}
+                      onChange={(e) => setEditFormData({ ...editFormData, officeLocation: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                </>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                <input
+                  type="text"
+                  value={editFormData.department}
+                  onChange={(e) => setEditFormData({ ...editFormData, department: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="submit"
+                  className="flex-1 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium"
+                >
+                  Save Changes
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="flex-1 px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition font-medium"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && deletingUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+            <div className="bg-red-600 px-6 py-5 rounded-t-2xl">
+              <h3 className="text-2xl font-bold text-white">Confirm Delete</h3>
+            </div>
+            
+            <div className="p-6">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="bg-red-100 rounded-full p-3">
+                  <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-gray-900 font-semibold mb-2">
+                    Are you sure you want to delete this {deletingUser.role}?
+                  </p>
+                  <p className="text-gray-600 text-sm mb-1">
+                    <strong>Name:</strong> {deletingUser.name}
+                  </p>
+                  <p className="text-gray-600 text-sm mb-3">
+                    <strong>Email:</strong> {deletingUser.email}
+                  </p>
+                  <p className="text-red-600 text-sm font-medium">
+                    This action cannot be undone.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={confirmDeleteUser}
+                  className="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="flex-1 px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition font-medium"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

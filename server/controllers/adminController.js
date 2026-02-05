@@ -259,10 +259,113 @@ export const getSystemAnalytics = async (req, res, next) => {
   }
 };
 
+// @desc    Update user (student or faculty)
+// @route   PUT /api/admin/users/:id
+// @access  Private (Admin only)
+export const updateUser = async (req, res, next) => {
+  try {
+    // Admin-only access
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied. Admin only.'
+      });
+    }
+
+    const { id } = req.params;
+    const updateData = req.body;
+
+    // Don't allow updating password through this endpoint
+    delete updateData.password;
+
+    // Don't allow updating role to admin
+    if (updateData.role === 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Cannot change user role to admin through this endpoint.'
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: user,
+      message: 'User updated successfully'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Delete user (student or faculty)
+// @route   DELETE /api/admin/users/:id
+// @access  Private (Admin only)
+export const deleteUser = async (req, res, next) => {
+  try {
+    // Admin-only access
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied. Admin only.'
+      });
+    }
+
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Don't allow deleting admin users
+    if (user.role === 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Cannot delete admin users.'
+      });
+    }
+
+    // Prevent admin from deleting themselves
+    if (user._id.toString() === req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'Cannot delete your own account.'
+      });
+    }
+
+    await user.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      message: `User ${user.name} deleted successfully`
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   getAllStudents,
   getAllFacultyAdmin,
   getStudentById,
   getFacultyById,
-  getSystemAnalytics
+  getSystemAnalytics,
+  updateUser,
+  deleteUser
 };
